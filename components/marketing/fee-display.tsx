@@ -31,7 +31,7 @@ export function FeeDisplay({
     return (
       <p
         className={cn(
-          "mono flex flex-wrap items-baseline gap-x-3 gap-y-1 border border-ink bg-block-yellow text-ink",
+          "mono flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-md border border-ink bg-block-yellow text-ink",
           isBanner ? "px-6 py-4 text-label" : "px-3 py-2 text-eyebrow",
           className,
         )}
@@ -56,7 +56,7 @@ export function FeeDisplay({
     <p
       className={cn(
         "mono flex flex-wrap items-baseline gap-x-3 gap-y-1 text-ink",
-        isBanner ? "border border-ink bg-block-white px-6 py-4 text-label" : "text-eyebrow",
+        isBanner ? "border border-line-soft bg-block-white px-6 py-4 text-label" : "text-eyebrow",
         className,
       )}
     >

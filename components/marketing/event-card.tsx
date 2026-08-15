@@ -49,7 +49,7 @@ export function UpcomingEventCard({
         ) : null}
       </div>
 
-      <dl className="grid grid-cols-2 gap-px border border-ink bg-ink text-ink">
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line-soft bg-line-soft text-ink">
         <div className="bg-block-white p-3">
           <dt className="mono text-eyebrow text-ink-muted">Where</dt>
           <dd className="mt-1 text-[14px] leading-snug">{locationLine(event)}</dd>

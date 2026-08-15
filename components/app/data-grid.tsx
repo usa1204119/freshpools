@@ -88,7 +88,7 @@ export function DataGrid<T>({
         </p>
       </div>
 
-      <div className="overflow-x-auto border border-ink">
+      <div className="overflow-x-auto rounded-lg border border-line-soft">
         <table
           className="w-full border-collapse bg-block-white text-left"
           style={{ minWidth }}
@@ -96,7 +96,7 @@ export function DataGrid<T>({
           <caption className="sr-only">{caption}</caption>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-ink">
+              <tr key={headerGroup.id} className="border-b border-line-mid">
                 {headerGroup.headers.map((header) => {
                   const canSort = header.column.getCanSort();
                   const sorted = header.column.getIsSorted();
@@ -111,7 +111,7 @@ export function DataGrid<T>({
                             ? "descending"
                             : undefined
                       }
-                      className="mono border-r border-ink text-eyebrow whitespace-nowrap text-ink-muted last:border-r-0"
+                      className="mono text-eyebrow whitespace-nowrap text-ink-muted"
                     >
                       {canSort ? (
                         <button
@@ -153,11 +153,11 @@ export function DataGrid<T>({
               </tr>
             ) : (
               rows.map((row) => (
-                <tr key={row.id} className="border-b border-ink last:border-b-0">
+                <tr key={row.id} className="border-b border-line-soft last:border-b-0">
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="border-r border-ink px-4 py-4 align-top last:border-r-0"
+                      className="px-4 py-4 align-top"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>

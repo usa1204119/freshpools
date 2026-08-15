@@ -40,12 +40,12 @@ export default function ForCollegesPage() {
             className="mb-12 max-w-[16ch]"
           />
 
-          <div className="grid gap-px border border-ink bg-ink lg:grid-cols-2">
+          <div className="grid gap-5 lg:grid-cols-2">
             {COLLEGE_OFFERINGS.map((offering, index) => (
               <Reveal key={offering.title} delay={index * 0.06}>
                 <Block
                   color={offering.color}
-                  className="flex h-full flex-col gap-6 border-0 p-8 lg:p-10"
+                  className="flex h-full flex-col gap-6 p-8 lg:p-10"
                 >
                   <p className="mono text-eyebrow text-ink-muted">
                     {offering.eyebrow}
@@ -55,7 +55,7 @@ export default function ForCollegesPage() {
                     {offering.title}
                   </h3>
 
-                  <div className="border-y border-ink py-4">
+                  <div className="border-y border-line-soft py-4">
                     <p className="font-sans text-[22px] font-bold">{offering.price}</p>
                     <p className="mono mt-1 text-eyebrow text-ink-muted">
                       {offering.priceNote}
@@ -103,7 +103,7 @@ export default function ForCollegesPage() {
       </section>
 
       {/* ── What the college actually gets ─────────────────────────────────── */}
-      <section className="section-y border-y border-ink bg-sky" aria-labelledby="outcomes-title">
+      <section className="section-y border-y border-line-soft wash-soft" aria-labelledby="outcomes-title">
         <div className="container-x grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
           <div className="flex flex-col gap-6">
             <Eyebrow>Outcomes</Eyebrow>
@@ -114,7 +114,7 @@ export default function ForCollegesPage() {
               size="h2"
             />
           </div>
-          <ul className="border-t border-ink">
+          <ul className="border-t border-line-soft">
             {[
               {
                 label: "Participation",
@@ -135,7 +135,7 @@ export default function ForCollegesPage() {
             ].map((row) => (
               <li
                 key={row.label}
-                className="flex flex-col gap-1 border-b border-ink py-5 sm:flex-row sm:gap-8"
+                className="flex flex-col gap-1 border-b border-line-soft py-5 sm:flex-row sm:gap-8"
               >
                 <span className="mono w-56 shrink-0 text-label text-ink-muted">
                   {row.label}

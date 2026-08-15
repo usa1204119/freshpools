@@ -20,6 +20,25 @@ export async function getVerifiedCandidateCount(): Promise<number> {
   );
 }
 
+/**
+ * Names behind the hero avatar stack. Only initials are ever rendered, which
+ * is less identifying than the masked names already shown on sample profile
+ * cards. Empty → the component renders nothing rather than inventing people.
+ */
+export async function getVerifiedNames(take = 4): Promise<string[]> {
+  const rows = await safeQuery(
+    () =>
+      prisma.candidate.findMany({
+        where: { inTalentPool: true, tier: { not: null } },
+        select: { user: { select: { name: true } } },
+        orderBy: { updatedAt: "desc" },
+        take,
+      }),
+    [] as { user: { name: string } }[],
+  );
+  return rows.map((row) => row.user.name);
+}
+
 /** Marquee names. Empty → the whole section does not render. */
 export async function getHiringPartners(): Promise<string[]> {
   const partners = await safeQuery(

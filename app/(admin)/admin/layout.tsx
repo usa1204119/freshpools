@@ -24,7 +24,8 @@ export default async function AdminLayout({
   if (session.user.role !== "ADMIN") redirect("/");
 
   return (
-    <AppShell nav={NAV} areaLabel="Admin" userName={session.user.name}>
+    /* Nine destinations — a sidebar, not a scrolling strip. */
+    <AppShell nav={NAV} areaLabel="Admin" userName={session.user.name} layout="sidebar">
       {children}
     </AppShell>
   );

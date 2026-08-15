@@ -26,7 +26,9 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "mono inline-flex items-center border border-ink px-2 py-1 text-eyebrow whitespace-nowrap",
+        // Badges stay ink-bordered: they are small, deliberately loud, and the
+        // fill alone would not read as a distinct object on a coloured card.
+        "mono inline-flex items-center rounded-sm border border-ink px-2 py-1 text-eyebrow whitespace-nowrap",
         toneClass[tone],
         className,
       )}

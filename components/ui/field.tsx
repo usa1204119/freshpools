@@ -1,9 +1,11 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-/* ── Shared flat-input chrome ──────────────────────────────────────────── */
+/* ── Shared input chrome ────────────────────────────────────────────────
+   v3: soft hairline at rest, ink on focus. A form of ten ink-bordered inputs
+   was the most congested surface on the site. */
 const controlBase =
-  "w-full border border-ink bg-block-white px-4 py-3 text-body text-ink placeholder:text-ink-muted/60 disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:bg-block-coral/30";
+  "w-full rounded-md border border-line-mid bg-block-white px-4 py-3 text-body text-ink transition-colors placeholder:text-ink-muted/60 hover:border-ink/40 focus:border-ink disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-ink aria-[invalid=true]:bg-block-coral/25";
 
 export const Input = React.forwardRef<
   HTMLInputElement,
@@ -114,8 +116,8 @@ export const Checkbox = React.forwardRef<
       id={id}
       type="checkbox"
       className={cn(
-        "mt-1 size-4 shrink-0 appearance-none border border-ink bg-block-white",
-        "checked:bg-ink checked:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20fill=%22none%22%3E%3Cpath%20d=%22M3%208.5L6.5%2012L13%204%22%20stroke=%22white%22%20stroke-width=%222%22/%3E%3C/svg%3E')] checked:bg-center checked:bg-no-repeat",
+        "mt-1 size-4 shrink-0 appearance-none rounded-[4px] border border-line-mid bg-block-white transition-colors",
+        "checked:border-ink checked:bg-ink checked:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20fill=%22none%22%3E%3Cpath%20d=%22M3%208.5L6.5%2012L13%204%22%20stroke=%22white%22%20stroke-width=%222%22/%3E%3C/svg%3E')] checked:bg-center checked:bg-no-repeat",
         className,
       )}
       {...props}
@@ -136,8 +138,8 @@ export const RadioTile = React.forwardRef<
   <label
     htmlFor={id}
     className={cn(
-      "flex cursor-pointer items-start gap-3 border border-ink bg-block-white p-4",
-      "has-[:checked]:bg-block-yellow",
+      "flex cursor-pointer items-start gap-3 rounded-md border border-line-mid bg-block-white p-4 transition-colors",
+      "hover:border-ink/40 has-[:checked]:border-ink has-[:checked]:bg-block-yellow",
       className,
     )}
   >
@@ -145,7 +147,7 @@ export const RadioTile = React.forwardRef<
       ref={ref}
       id={id}
       type="radio"
-      className="mt-1 size-4 shrink-0 appearance-none border border-ink bg-block-white checked:border-4 checked:bg-ink"
+      className="mt-1 size-4 shrink-0 appearance-none rounded-full border border-line-mid bg-block-white checked:border-4 checked:border-ink checked:bg-block-white"
       {...props}
     />
     <span>

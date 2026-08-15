@@ -26,7 +26,7 @@ const STEPS = ["Your details", "Team", "Payment", "Done"] as const;
 
 function StepRail({ current }: { current: number }) {
   return (
-    <ol className="mb-10 grid grid-cols-4 gap-px border border-ink bg-ink">
+    <ol className="mb-10 grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-line-soft bg-line-soft">
       {STEPS.map((label, index) => {
         const done = index < current;
         const active = index === current;
@@ -188,7 +188,7 @@ export default async function RegisterPage({
 
   return (
     <>
-      <section className="border-b border-ink bg-sky">
+      <section className="border-b border-line-soft wash-soft">
         <div className="container-x py-12 lg:py-16">
           <Eyebrow className="mb-4">Register</Eyebrow>
           <MixedHeadline
@@ -276,7 +276,7 @@ export default async function RegisterPage({
                     {registration.team.members.map((member) => (
                       <li
                         key={member.candidate.id}
-                        className="mono border border-ink px-2 py-1 text-eyebrow"
+                        className="mono rounded-sm border border-line-mid px-2 py-1 text-eyebrow"
                       >
                         {member.candidate.user.name}
                         {member.candidate.id === registration.team?.leaderId
@@ -288,12 +288,12 @@ export default async function RegisterPage({
                 </div>
                 <div className="text-right">
                   <p className="mono text-eyebrow text-ink-muted">Join code</p>
-                  <p className="mono mt-2 border border-ink bg-block-white px-3 py-2 text-[20px] tracking-[0.25em]">
+                  <p className="mono mt-2 rounded-md border border-line-mid bg-block-white px-3 py-2 text-[20px] tracking-[0.25em]">
                     {registration.team.joinCode}
                   </p>
                 </div>
               </div>
-              <div className="mt-5 border-t border-ink pt-4">
+              <div className="mt-5 border-t border-line-soft pt-4">
                 <LeaveTeamButton teamId={registration.team.id} eventSlug={slug} />
               </div>
             </Block>
@@ -312,7 +312,7 @@ export default async function RegisterPage({
               </div>
 
               {registration.paymentStatus === "FAILED" ? (
-                <p className="mono mt-4 border border-ink bg-block-coral px-4 py-3 text-label">
+                <p className="mono mt-4 rounded-md border border-ink bg-block-coral px-4 py-3 text-label">
                   ▲ That payment didn&apos;t go through. Your registration is
                   saved — retry below.
                 </p>
@@ -334,7 +334,7 @@ export default async function RegisterPage({
                     }
                   />
                 ) : (
-                  <p className="mono border border-ink bg-block-yellow px-4 py-3 text-label">
+                  <p className="mono rounded-md border border-ink bg-block-yellow px-4 py-3 text-label">
                     ✦ Payments are not configured on this deployment. Set the
                     RAZORPAY_* environment variables.
                   </p>

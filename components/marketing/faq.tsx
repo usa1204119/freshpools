@@ -49,14 +49,14 @@ export function Faq({
           </div>
         </div>
 
-        <div className="border-b border-ink">
+        <div className="border-b border-line-soft">
           {items.map((item, index) => {
             const isOpen = open === index;
             const panelId = `${baseId}-panel-${index}`;
             const buttonId = `${baseId}-button-${index}`;
 
             return (
-              <div key={item.q} className="border-t border-ink">
+              <div key={item.q} className="border-t border-line-soft">
                 <h3>
                   <button
                     id={buttonId}

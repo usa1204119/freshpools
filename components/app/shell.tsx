@@ -15,19 +15,34 @@ export function AppShell({
   children,
   areaLabel,
   userName,
+  layout = "topbar",
 }: {
   nav: NavItem[];
   children: React.ReactNode;
   areaLabel: string;
   userName?: string | null;
+  /**
+   * `sidebar` at lg+ for areas with many destinations. Nine admin items in a
+   * horizontally scrolling strip was the main reason admin felt hard to
+   * navigate; four to six items are fine as a topbar.
+   */
+  layout?: "topbar" | "sidebar";
 }) {
+  if (layout === "sidebar") {
+    return (
+      <AppSidebarShell nav={nav} areaLabel={areaLabel} userName={userName}>
+        {children}
+      </AppSidebarShell>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-paper">
-      <header className="sticky top-0 z-40 border-b border-ink bg-paper">
+      <header className="sticky top-0 z-40 border-b border-line-soft bg-paper/90 backdrop-blur">
         <div className="container-x flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Logo />
-            <span className="mono hidden border border-ink px-2 py-1 text-eyebrow sm:inline-block">
+            <span className="mono hidden rounded-sm border border-line-mid px-2 py-1 text-eyebrow sm:inline-block">
               {areaLabel}
             </span>
           </div>
@@ -41,7 +56,7 @@ export function AppShell({
             <form action={signOutAction}>
               <button
                 type="submit"
-                className="mono border border-ink px-3 py-2 text-eyebrow hover:bg-ink hover:text-white"
+                className="mono rounded-md border border-line-mid px-3 py-2 text-eyebrow transition-colors hover:border-ink hover:bg-ink hover:text-white"
               >
                 Sign out
               </button>
@@ -49,13 +64,13 @@ export function AppShell({
           </div>
         </div>
 
-        <nav aria-label={areaLabel} className="border-t border-ink bg-block-white">
+        <nav aria-label={areaLabel} className="border-t border-line-soft bg-block-white">
           <ul className="container-x flex gap-0 overflow-x-auto">
             {nav.map((item) => (
               <li key={item.href} className="shrink-0">
                 <Link
                   href={item.href}
-                  className="mono block border-r border-ink px-4 py-3 text-eyebrow whitespace-nowrap hover:bg-block-yellow"
+                  className="mono block px-4 py-3 text-eyebrow whitespace-nowrap transition-colors hover:bg-block-yellow"
                 >
                   {item.label}
                 </Link>
@@ -69,13 +84,119 @@ export function AppShell({
         {children}
       </main>
 
-      <footer className="border-t border-ink bg-block-white">
+      <footer className="border-t border-line-soft bg-block-white">
         <div className="container-x py-5">
           <p className="mono text-eyebrow text-ink-muted">
             FreshPools · Students never pay for placement
           </p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+/**
+ * Sidebar variant for the admin area. Collapses to the same top strip below
+ * `lg`, where a fixed sidebar would eat most of the screen.
+ */
+function AppSidebarShell({
+  nav,
+  children,
+  areaLabel,
+  userName,
+}: {
+  nav: NavItem[];
+  children: React.ReactNode;
+  areaLabel: string;
+  userName?: string | null;
+}) {
+  return (
+    <div className="min-h-screen bg-paper lg:flex">
+      <aside className="hidden w-60 shrink-0 border-r border-line-soft bg-block-white lg:flex lg:flex-col">
+        <div className="flex items-center gap-3 px-5 py-6">
+          <Logo />
+          <span className="mono rounded-sm border border-line-mid px-2 py-1 text-eyebrow">
+            {areaLabel}
+          </span>
+        </div>
+
+        <nav aria-label={areaLabel} className="flex-1 px-3">
+          <ul className="flex flex-col gap-0.5">
+            {nav.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="mono block rounded-md px-3 py-2.5 text-eyebrow transition-colors hover:bg-sky-50"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="border-t border-line-soft px-5 py-4">
+          {userName ? (
+            <p className="mono mb-3 text-eyebrow text-ink-muted">{userName}</p>
+          ) : null}
+          <form action={signOutAction}>
+            <button
+              type="submit"
+              className="mono w-full rounded-md border border-line-mid px-3 py-2 text-eyebrow transition-colors hover:border-ink hover:bg-ink hover:text-white"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
+      </aside>
+
+      {/* Below lg the sidebar becomes the familiar scrolling strip. */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-40 border-b border-line-soft bg-paper/90 backdrop-blur lg:hidden">
+          <div className="container-x flex h-16 items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Logo />
+              <span className="mono rounded-sm border border-line-mid px-2 py-1 text-eyebrow">
+                {areaLabel}
+              </span>
+            </div>
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                className="mono rounded-md border border-line-mid px-3 py-2 text-eyebrow"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
+          <nav aria-label={areaLabel} className="border-t border-line-soft bg-block-white">
+            <ul className="container-x flex gap-0 overflow-x-auto">
+              {nav.map((item) => (
+                <li key={item.href} className="shrink-0">
+                  <Link
+                    href={item.href}
+                    className="mono block px-4 py-3 text-eyebrow whitespace-nowrap hover:bg-block-yellow"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </header>
+
+        <main id="main" className="flex-1 px-6 py-10 lg:px-10 lg:py-12">
+          {children}
+        </main>
+
+        <footer className="border-t border-line-soft bg-block-white">
+          <div className="px-6 py-5 lg:px-10">
+            <p className="mono text-eyebrow text-ink-muted">
+              FreshPools · Students never pay for placement
+            </p>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
@@ -91,7 +212,7 @@ export function PageTitle({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-10 flex flex-col gap-4 border-b border-ink pb-6 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-10 flex flex-col gap-4 border-b border-line-soft pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h1 className="hl-serif text-[34px] leading-none tracking-[-0.02em] lg:text-[44px]">
           {title}
@@ -152,13 +273,14 @@ export function StatTile({
 
 export function StatRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid gap-px border border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-px overflow-hidden rounded-lg border border-line-soft bg-line-soft sm:grid-cols-2 lg:grid-cols-4">
       {children}
     </div>
   );
 }
 
-/** Bordered table shell — 1px ink borders, no zebra stripes. */
+/** Table shell. v3: soft hairlines between rows, ink only under the header.
+    No zebra stripes — that rule survives from v2. */
 export function DataTable({
   headers,
   children,
@@ -171,19 +293,19 @@ export function DataTable({
   minWidth?: number;
 }) {
   return (
-    <div className="overflow-x-auto border border-ink">
+    <div className="overflow-x-auto rounded-lg border border-line-soft">
       <table
         className="w-full border-collapse bg-block-white text-left"
         style={{ minWidth }}
       >
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="border-b border-ink">
+          <tr className="border-b border-line-mid">
             {headers.map((heading) => (
               <th
                 key={heading}
                 scope="col"
-                className="mono border-r border-ink px-4 py-3 text-eyebrow whitespace-nowrap text-ink-muted last:border-r-0"
+                className="mono px-4 py-3 text-eyebrow whitespace-nowrap text-ink-muted"
               >
                 {heading}
               </th>
@@ -208,7 +330,7 @@ export function Td({
   return (
     <td
       colSpan={colSpan}
-      className={cn("border-r border-ink px-4 py-4 align-top last:border-r-0", className)}
+      className={cn("px-4 py-4 align-top", className)}
     >
       {children}
     </td>
@@ -216,7 +338,7 @@ export function Td({
 }
 
 export function Tr({ children }: { children: React.ReactNode }) {
-  return <tr className="border-b border-ink last:border-b-0">{children}</tr>;
+  return <tr className="border-b border-line-soft last:border-b-0">{children}</tr>;
 }
 
 export function EmptyState({
@@ -229,7 +351,7 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="border border-ink bg-block-white p-10">
+    <div className="rounded-lg border border-line-soft bg-block-white p-10">
       <p className="hl-serif text-[24px] leading-tight">{title}</p>
       <p className="mt-3 max-w-xl text-[15px] text-ink-muted">{body}</p>
       {action ? <div className="mt-6">{action}</div> : null}
@@ -239,7 +361,7 @@ export function EmptyState({
 
 export function SetupNotice() {
   return (
-    <div className="border border-ink bg-block-yellow p-8">
+    <div className="rounded-lg border border-ink bg-block-yellow p-8">
       <p className="mono mb-3 text-eyebrow">✦ Not connected</p>
       <p className="text-body-lg">
         This area needs a database. Set <code>DATABASE_URL</code> in{" "}

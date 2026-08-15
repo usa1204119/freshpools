@@ -6,6 +6,7 @@ import { FeeDisplay, StudentsNeverPayNote } from "@/components/marketing/fee-dis
 import { Countdown } from "@/components/marketing/countdown";
 import { StickyRegister } from "@/components/marketing/sticky-register";
 import { Faq } from "@/components/marketing/faq";
+import { SectionNav } from "@/components/marketing/section-nav";
 import { Reveal } from "@/components/marketing/reveal";
 import { Block, blockAt } from "@/components/ui/block";
 import { ButtonLink } from "@/components/ui/button";
@@ -94,7 +95,7 @@ export default async function EventPage({
   return (
     <>
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
-      <section className="border-b border-ink bg-sky">
+      <section className="border-b border-line-soft wash-soft">
         <div className="container-x py-16 lg:py-24">
           <div className="flex flex-wrap items-center gap-3">
             <StatusBadge tone={eventTone[event.status] ?? "neutral"}>
@@ -125,9 +126,9 @@ export default async function EventPage({
             </p>
           ) : null}
 
-          <dl className="mt-12 grid gap-px border border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {facts.map((fact) => (
-              <div key={fact.label} className="bg-block-white p-5">
+              <div key={fact.label} className="rounded-lg border border-line-soft bg-block-white p-5">
                 <dt className="mono text-eyebrow text-ink-muted">{fact.label}</dt>
                 <dd className="mt-2 text-[16px] leading-snug font-medium">
                   {fact.value}
@@ -160,7 +161,7 @@ export default async function EventPage({
                 Register
               </ButtonLink>
             ) : (
-              <p className="mono border border-ink bg-paper px-6 py-4 text-label">
+              <p className="mono rounded-md border border-line-mid bg-paper px-6 py-4 text-label">
                 {registrationClosedLabel}
               </p>
             )}
@@ -177,8 +178,23 @@ export default async function EventPage({
         </div>
       </section>
 
+      {/* Thirteen sections is too many to scroll blind. Tracks and prizes only
+          appear when the event actually has them. */}
+      <SectionNav
+        sections={[
+          { id: "problem", label: "Problem" },
+          ...(event.tracks.length > 0 ? [{ id: "tracks", label: "Tracks" }] : []),
+          { id: "timeline", label: "Timeline" },
+          ...(event.prizes.length > 0 ? [{ id: "prizes", label: "Prizes" }] : []),
+          { id: "benefits", label: "What you get" },
+          { id: "judging", label: "Judging" },
+          { id: "rules", label: "Rules" },
+          { id: "fees", label: "Fees & refunds" },
+        ]}
+      />
+
       {/* ── 4. Problem statement ───────────────────────────────────────────── */}
-      <section className="section-y bg-paper" aria-labelledby="problem-title">
+      <section className="section-y bg-paper" id="problem" aria-labelledby="problem-title">
         <div className="container-x grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
           <div className="flex flex-col gap-6">
             <Eyebrow>The problem</Eyebrow>
@@ -202,7 +218,7 @@ export default async function EventPage({
 
       {/* ── 5. Tracks ──────────────────────────────────────────────────────── */}
       {event.tracks.length > 0 ? (
-        <section className="section-y border-t border-ink bg-sky" aria-labelledby="tracks-title">
+        <section className="section-y border-t border-line-soft wash-soft" id="tracks" aria-labelledby="tracks-title">
           <div className="container-x">
             <Eyebrow className="mb-6">Tracks</Eyebrow>
             <MixedHeadline
@@ -229,7 +245,7 @@ export default async function EventPage({
       ) : null}
 
       {/* ── 6. Timeline ────────────────────────────────────────────────────── */}
-      <section className="section-y border-t border-ink bg-paper" aria-labelledby="timeline-title">
+      <section className="section-y border-t border-line-soft bg-paper" id="timeline" aria-labelledby="timeline-title">
         <div className="container-x">
           <Eyebrow className="mb-6">Timeline</Eyebrow>
           <MixedHeadline
@@ -239,9 +255,9 @@ export default async function EventPage({
             size="h2"
             className="mb-12"
           />
-          <ol className="grid gap-px border border-ink bg-ink sm:grid-cols-2 lg:grid-cols-6">
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
             {EVENT_TIMELINE.map((step, index) => (
-              <li key={step.label} className="bg-block-white p-5">
+              <li key={step.label} className="rounded-lg border border-line-soft bg-block-white p-5">
                 <span className="mono text-eyebrow text-ink-muted">
                   {String(index + 1).padStart(2, "0")}
                 </span>
@@ -263,7 +279,7 @@ export default async function EventPage({
 
       {/* ── 7. Prizes ──────────────────────────────────────────────────────── */}
       {event.prizes.length > 0 ? (
-        <section className="section-y border-t border-ink bg-sky" aria-labelledby="prizes-title">
+        <section className="section-y border-t border-line-soft wash-soft" id="prizes" aria-labelledby="prizes-title">
           <div className="container-x">
             <Eyebrow className="mb-6">Prizes</Eyebrow>
             <MixedHeadline
@@ -293,7 +309,7 @@ export default async function EventPage({
       ) : null}
 
       {/* ── 8. What you get even if you don't win ─────────────────────────── */}
-      <section className="section-y border-t border-ink bg-paper" aria-labelledby="benefits-title">
+      <section className="section-y border-t border-line-soft bg-paper" id="benefits" aria-labelledby="benefits-title">
         <div className="container-x">
           <Eyebrow className="mb-6">Even if you don&apos;t win</Eyebrow>
           <MixedHeadline
@@ -303,10 +319,10 @@ export default async function EventPage({
             size="h2"
             className="mb-12 max-w-[20ch]"
           />
-          <div className="grid gap-px border border-ink bg-ink lg:grid-cols-3">
+          <div className="grid gap-5 lg:grid-cols-3">
             {NON_WINNER_BENEFITS.map((benefit, index) => (
               <Reveal key={benefit.heading} delay={index * 0.06}>
-                <Block color={blockAt(index)} className="h-full border-0 p-8">
+                <Block color={blockAt(index)} className="h-full p-8">
                   <h3 className="font-sans text-[24px] leading-tight font-bold tracking-[-0.02em]">
                     {benefit.heading}
                   </h3>
@@ -321,7 +337,7 @@ export default async function EventPage({
       </section>
 
       {/* ── 9. Judging criteria — public on purpose ───────────────────────── */}
-      <section className="section-y border-t border-ink bg-sky" aria-labelledby="judging-title">
+      <section className="section-y border-t border-line-soft wash-soft" id="judging" aria-labelledby="judging-title">
         <div className="container-x grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
           <div className="flex flex-col gap-6">
             <Eyebrow>Judging</Eyebrow>
@@ -336,17 +352,17 @@ export default async function EventPage({
               write a line of code. Scoring is per person, not per team.
             </p>
           </div>
-          <ul className="border border-ink bg-block-white">
+          <ul className="border border-line-soft bg-block-white">
             {JUDGING_CRITERIA.map((criterion) => (
               <li
                 key={criterion.label}
-                className="flex flex-col gap-3 border-b border-ink p-6 last:border-b-0"
+                className="flex flex-col gap-3 border-b border-line-soft p-6 last:border-b-0"
               >
                 <div className="flex items-baseline justify-between gap-4">
                   <p className="font-sans text-[18px] font-medium">{criterion.label}</p>
                   <p className="mono text-label">{criterion.weight}%</p>
                 </div>
-                <div className="h-2 border border-ink" aria-hidden="true">
+                <div className="h-2 overflow-hidden rounded-full bg-sky-100 border-0" aria-hidden="true">
                   <div className="h-full bg-ink" style={{ width: `${criterion.weight}%` }} />
                 </div>
                 <p className="text-[14px] text-ink-muted">{criterion.note}</p>
@@ -357,17 +373,17 @@ export default async function EventPage({
       </section>
 
       {/* ── 10. Rules ──────────────────────────────────────────────────────── */}
-      <section className="section-y border-t border-ink bg-paper" aria-labelledby="rules-title">
+      <section className="section-y border-t border-line-soft bg-paper" id="rules" aria-labelledby="rules-title">
         <div className="container-x grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-16">
           <div className="flex flex-col gap-6">
             <Eyebrow>Rules</Eyebrow>
             <MixedHeadline id="rules-title" text="Short **list.**" as="h2" size="h2" />
           </div>
-          <ul className="border-t border-ink">
+          <ul className="border-t border-line-soft">
             {rules.map((rule) => (
               <li
                 key={rule}
-                className="flex gap-4 border-b border-ink py-5 text-[16px] leading-relaxed"
+                className="flex gap-4 border-b border-line-soft py-5 text-[16px] leading-relaxed"
               >
                 <span aria-hidden="true" className="mono text-ink-muted">
                   ✦
@@ -380,7 +396,7 @@ export default async function EventPage({
       </section>
 
       {/* ── 11. Fee & refund policy ────────────────────────────────────────── */}
-      <section id="fees" className="section-y border-t border-ink bg-sky" aria-labelledby="fees-title">
+      <section id="fees" className="section-y border-t border-line-soft wash-soft" aria-labelledby="fees-title">
         <div className="container-x">
           <Eyebrow className="mb-6">Fees &amp; refunds</Eyebrow>
           <MixedHeadline
@@ -433,7 +449,7 @@ export default async function EventPage({
       />
 
       {/* ── 13. Register CTA repeat ────────────────────────────────────────── */}
-      <section className="border-t border-ink bg-block-ink text-white">
+      <section className="bg-block-ink text-white">
         <div className="container-x flex flex-col items-start gap-8 py-20 lg:flex-row lg:items-center lg:justify-between">
           <MixedHeadline
             text={canRegister ? "Ready? **Take the slot.**" : "Missed this one?"}

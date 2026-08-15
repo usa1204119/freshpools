@@ -7,25 +7,30 @@ export function DashboardMockup() {
     <div
       role="img"
       aria-label="Illustration of the FreshPools company dashboard showing a verification rate, the next event date, and a role pipeline status."
-      className="border border-ink bg-block-white"
+      /* The one place a large radius is the point: this reads as a device, and
+         the soft elevation is what lifts it off the section boundary. */
+      className="overflow-hidden rounded-xl border border-line-soft bg-block-white shadow-lg"
     >
       {/* Frame chrome */}
-      <div className="flex items-center justify-between gap-4 border-b border-ink px-5 py-3">
+      <div className="flex items-center justify-between gap-4 border-b border-line-soft px-5 py-3.5">
         <p className="mono text-eyebrow">Freshpools · Company view</p>
         <p className="mono text-eyebrow text-ink-muted" aria-hidden="true">
           Illustration
         </p>
       </div>
 
-      <div className="grid gap-px bg-ink sm:grid-cols-3">
+      <div className="grid gap-px bg-line-soft sm:grid-cols-3">
         {/* Yellow tile: a % metric with a flat progress bar */}
         <div className="bg-block-yellow p-6">
           <p className="mono text-eyebrow">Shortlist accuracy</p>
           <p className="mt-4 font-sans text-[44px] leading-none font-bold tracking-[-0.03em]">
             82%
           </p>
-          <div className="mt-5 h-3 border border-ink" aria-hidden="true">
-            <div className="h-full w-[82%] bg-ink" />
+          <div
+            className="mt-5 h-3 overflow-hidden rounded-full border border-ink/25"
+            aria-hidden="true"
+          >
+            <div className="h-full w-[82%] rounded-full bg-ink" />
           </div>
           <p className="mono mt-3 text-eyebrow text-ink-muted">
             Reached interview round
@@ -39,7 +44,7 @@ export function DashboardMockup() {
             Build Sprint
           </p>
           <p className="hl-serif mt-1 text-[20px] text-ink-muted">Pune · Offline</p>
-          <div className="mt-5 border-t border-ink pt-3">
+          <div className="mt-5 border-t border-line-soft pt-3">
             <p className="mono text-eyebrow text-ink-muted">Submissions close</p>
             <p className="mono mt-1 text-label">18 Sep · 23:59 IST</p>
           </div>

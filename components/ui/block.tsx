@@ -23,20 +23,34 @@ export function blockAt(index: number): BlockColor {
   return BLOCK_CYCLE[index % BLOCK_CYCLE.length];
 }
 
-/** A flat colour panel: 1px ink border, zero radius, no shadow. */
+/**
+ * A colour panel. v3: soft hairline + radius, so a grid of these reads as a set
+ * of surfaces rather than a heavy grid. Pass `emphasis` for the one card per
+ * section that is meant to be loud.
+ */
 export function Block({
   color = "white",
   className,
   children,
   as: Tag = "div",
+  emphasis = false,
 }: {
   color?: BlockColor;
   className?: string;
   children: React.ReactNode;
   as?: "div" | "article" | "section" | "li" | "aside";
+  /** Solid ink border. Use sparingly — see the ~3-per-screen rule. */
+  emphasis?: boolean;
 }) {
   return (
-    <Tag className={cn("border border-ink", blockBg[color], className)}>
+    <Tag
+      className={cn(
+        "rounded-lg border",
+        emphasis ? "border-ink" : "border-line-soft",
+        blockBg[color],
+        className,
+      )}
+    >
       {children}
     </Tag>
   );
@@ -77,8 +91,8 @@ export function FeatureCard({
           <span
             aria-hidden="true"
             className={cn(
-              "flex size-12 shrink-0 items-center justify-center border",
-              isInkBlock ? "border-white" : "border-ink",
+              "flex size-12 shrink-0 items-center justify-center rounded-md border",
+              isInkBlock ? "border-white/40" : "border-line-mid",
             )}
           >
             {icon}
@@ -162,9 +176,7 @@ export function CardGrid({
   className?: string;
   as?: "div" | "ul";
 }) {
-  return (
-    <Tag className={cn("grid gap-4", columns, className)}>{children}</Tag>
-  );
+  return <Tag className={cn("grid gap-5", columns, className)}>{children}</Tag>;
 }
 
 /** Big number + label, used in the problem section. */

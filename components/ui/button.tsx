@@ -9,16 +9,18 @@ import { cn } from "@/lib/utils";
  * on primary, per the design system.
  */
 const buttonVariants = cva(
-  "group/btn inline-flex items-center justify-center gap-3 border font-sans font-medium leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-40",
+  "group/btn inline-flex items-center justify-center gap-3 rounded-md border font-sans font-medium leading-none transition-all duration-150 disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
-        primary: "border-ink bg-ink text-white hover:bg-ink",
-        secondary: "border-ink bg-transparent text-ink hover:bg-ink hover:text-white",
+        /* Buttons are emphasis by definition, so they keep the ink edge. */
+        primary: "border-ink bg-ink text-white shadow-sm hover:bg-ink hover:shadow-md",
+        secondary:
+          "border-line-mid bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-white",
         /** For use on top of an ink-filled block */
         inverse: "border-white bg-white text-ink hover:bg-transparent hover:text-white",
         /** Text-only, used inside cards */
-        link: "mono border-transparent p-0 text-label underline underline-offset-4 hover:bg-transparent",
+        link: "mono rounded-none border-transparent p-0 text-label underline underline-offset-4 hover:bg-transparent",
       },
       size: {
         default: "px-7 py-4 text-[15px]",

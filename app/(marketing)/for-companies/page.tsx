@@ -43,7 +43,7 @@ export default function ForCompaniesPage() {
             size="h2"
             className="mb-12 max-w-[18ch]"
           />
-          <div className="grid gap-px border border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {VERIFICATION_STEPS.map((step, index) => (
               <Reveal key={step.heading} delay={index * 0.06}>
                 <FeatureCard
@@ -63,7 +63,7 @@ export default function ForCompaniesPage() {
       {/* ── Requirement form ───────────────────────────────────────────────── */}
       <section
         id="requirement"
-        className="section-y border-t border-ink bg-sky"
+        className="section-y border-t border-line-soft wash-soft"
         aria-labelledby="requirement-title"
       >
         <div className="container-x grid gap-12 lg:grid-cols-[2fr_3fr] lg:gap-16">
@@ -104,7 +104,7 @@ export default function ForCompaniesPage() {
       {/* ── Pricing ────────────────────────────────────────────────────────── */}
       <section
         id="pricing"
-        className="section-y border-t border-ink bg-paper"
+        className="section-y border-t border-line-soft bg-paper"
         aria-labelledby="pricing-title"
       >
         <div className="container-x">
@@ -117,7 +117,7 @@ export default function ForCompaniesPage() {
             className="mb-12 max-w-[18ch]"
           />
 
-          <div className="grid gap-px border border-ink bg-ink lg:grid-cols-3">
+          <div className="grid gap-5 lg:grid-cols-3">
             {[
               {
                 heading: "Nothing to start",
@@ -132,7 +132,7 @@ export default function ForCompaniesPage() {
                 body: "The clock starts on the joining date. If the hire does not last 90 days, no fee is due — we would rather fix the match than argue about an invoice.",
               },
             ].map((item, index) => (
-              <Block key={item.heading} color={blockAt(index)} className="border-0 p-8">
+              <Block key={item.heading} color={blockAt(index)} className="h-full p-8">
                 <h3 className="font-sans text-[24px] leading-tight font-bold tracking-[-0.02em]">
                   {item.heading}
                 </h3>

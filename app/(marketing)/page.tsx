@@ -13,23 +13,25 @@ import {
   getHiringPartners,
   getSampleProfiles,
   getVerifiedCandidateCount,
+  getVerifiedNames,
 } from "@/lib/queries";
-import { cn } from "@/lib/utils";
 
 export default async function LandingPage() {
   // Fetched in parallel — none of these depend on each other.
-  const [verifiedCount, partners, sampleProfiles] = await Promise.all([
-    getVerifiedCandidateCount(),
-    getHiringPartners(),
-    getSampleProfiles(3),
-  ]);
+  const [verifiedCount, verifiedNames, partners, sampleProfiles] =
+    await Promise.all([
+      getVerifiedCandidateCount(),
+      getVerifiedNames(4),
+      getHiringPartners(),
+      getSampleProfiles(3),
+    ]);
 
   return (
     <>
-      <Hero verifiedCount={verifiedCount} />
+      <Hero verifiedCount={verifiedCount} verifiedNames={verifiedNames} />
 
       {/* ── Dashboard mockup: half-cropped, overlapping the section boundary ── */}
-      <section aria-hidden="false" className="relative bg-sky">
+      <section aria-hidden="false" className="relative bg-paper">
         <div className="container-x">
           <div className="-mb-24 lg:-mb-32">
             <DashboardMockup />
@@ -52,7 +54,7 @@ export default async function LandingPage() {
               headline="Not another resume pile. **A verified shortlist.**"
               sub="Fresher hiring breaks at the same place every time: a stack of near-identical CVs, and no way to tell who can actually build. So we stopped reading CVs and started reading code."
             >
-              <div className="grid gap-px bg-ink sm:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-3">
                 {PROBLEM_STATS.map((stat, index) => (
                   <StatBlock
                     key={stat.value}
@@ -69,7 +71,7 @@ export default async function LandingPage() {
       </section>
 
       {/* ── How verification works ─────────────────────────────────────────── */}
-      <section className="section-y border-y border-ink bg-sky" aria-labelledby="verify-title">
+      <section className="section-y border-y border-line-soft wash-soft" aria-labelledby="verify-title">
         <div className="container-x">
           <Reveal>
             <div className="flex flex-col gap-6">
@@ -88,7 +90,7 @@ export default async function LandingPage() {
             </div>
           </Reveal>
 
-          <div className="mt-14 grid gap-px bg-ink sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {VERIFICATION_STEPS.map((step, index) => (
               <Reveal key={step.heading} delay={index * 0.06}>
                 <FeatureCard
@@ -98,7 +100,7 @@ export default async function LandingPage() {
                   icon={<span className="text-xl">{step.icon}</span>}
                   heading={step.heading}
                   body={step.body}
-                  className="h-full border-0"
+                  className="h-full"
                 />
               </Reveal>
             ))}
@@ -130,20 +132,12 @@ export default async function LandingPage() {
               </div>
             </Reveal>
 
-            {/* bg-ink paints the gaps, so an empty cell would render as a
-                black rectangle — never request more columns than cards. */}
-            <div
-              className={cn(
-                "mt-12 grid gap-px bg-ink",
-                sampleProfiles.length > 1 && "sm:grid-cols-2",
-                sampleProfiles.length > 2 && "lg:grid-cols-3",
-              )}
-            >
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {sampleProfiles.map((profile, index) => (
                 <Reveal key={profile.id} delay={index * 0.06}>
                   <Block
                     color={blockAt(index)}
-                    className="flex h-full flex-col gap-5 border-0 p-8"
+                    className="flex h-full flex-col gap-5 p-8"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -163,7 +157,7 @@ export default async function LandingPage() {
                       {profile.skills.map((skill) => (
                         <li
                           key={skill}
-                          className="mono border border-ink px-2 py-1 text-eyebrow"
+                          className="mono rounded-sm border border-line-mid px-2 py-1 text-eyebrow"
                         >
                           {skill}
                         </li>

@@ -71,7 +71,7 @@ export default async function HackathonsPage({
 
       {/* ── Filters ────────────────────────────────────────────────────────── */}
       {hasAnyEvent ? (
-        <section aria-label="Filter events" className="border-b border-ink bg-paper">
+        <section aria-label="Filter events" className="sticky top-16 z-30 border-b border-line-soft bg-paper/90 backdrop-blur-md lg:top-20">
           <div className="container-x flex flex-wrap items-center gap-x-8 gap-y-4 py-5">
             <div className="flex flex-wrap items-center gap-3">
               <span className="mono text-eyebrow text-ink-muted">Mode</span>
@@ -88,7 +88,7 @@ export default async function HackathonsPage({
                     href={buildHref({ mode: option.value })}
                     aria-current={active ? "true" : undefined}
                     className={cn(
-                      "mono border border-ink px-3 py-1.5 text-eyebrow",
+                      "mono rounded-full border border-line-mid px-3 py-1.5 text-eyebrow",
                       active ? "bg-ink text-white" : "bg-block-white text-ink",
                     )}
                   >
@@ -104,7 +104,7 @@ export default async function HackathonsPage({
                 <Link
                   href={buildHref({ city: "all" })}
                   className={cn(
-                    "mono border border-ink px-3 py-1.5 text-eyebrow",
+                    "mono rounded-full border border-line-mid px-3 py-1.5 text-eyebrow",
                     !city ? "bg-ink text-white" : "bg-block-white text-ink",
                   )}
                 >
@@ -115,7 +115,7 @@ export default async function HackathonsPage({
                     key={name}
                     href={buildHref({ city: name })}
                     className={cn(
-                      "mono border border-ink px-3 py-1.5 text-eyebrow",
+                      "mono rounded-full border border-line-mid px-3 py-1.5 text-eyebrow",
                       city === name ? "bg-ink text-white" : "bg-block-white text-ink",
                     )}
                   >
@@ -186,7 +186,7 @@ export default async function HackathonsPage({
 
       {/* ── Past ───────────────────────────────────────────────────────────── */}
       {past.length > 0 ? (
-        <section className="section-y border-t border-ink bg-sky" aria-labelledby="past-title">
+        <section className="section-y border-t border-line-soft wash-soft" aria-labelledby="past-title">
           <div className="container-x">
             <MixedHeadline
               id="past-title"

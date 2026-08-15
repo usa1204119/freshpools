@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function CollegeThankYouPage() {
   return (
     <>
-      <section className="border-b border-ink bg-sky">
+      <section className="border-b border-line-soft wash-soft">
         <div className="container-x py-20 lg:py-28">
           <Eyebrow className="mb-6">Enquiry received</Eyebrow>
           <MixedHeadline
@@ -30,7 +30,7 @@ export default function CollegeThankYouPage() {
 
       <section className="section-y bg-paper">
         <div className="container-x">
-          <div className="grid gap-px border border-ink bg-ink lg:grid-cols-3">
+          <div className="grid gap-5 lg:grid-cols-3">
             {[
               {
                 heading: "A short call",
@@ -45,7 +45,7 @@ export default function CollegeThankYouPage() {
                 body: "We avoid your exam weeks. August–September and January are usually the cleanest windows.",
               },
             ].map((step, index) => (
-              <Block key={step.heading} color={blockAt(index)} className="border-0 p-8">
+              <Block key={step.heading} color={blockAt(index)} className="h-full p-8">
                 <p className="mono text-eyebrow text-ink-muted">
                   {String(index + 1).padStart(2, "0")}
                 </p>

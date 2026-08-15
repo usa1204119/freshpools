@@ -34,7 +34,7 @@ export default async function LeaderboardPage({
 
   return (
     <>
-      <section className="border-b border-ink bg-sky">
+      <section className="border-b border-line-soft wash-soft">
         <div className="container-x py-16 lg:py-20">
           <Eyebrow className="mb-6">Results</Eyebrow>
           <MixedHeadline
@@ -71,18 +71,18 @@ export default async function LeaderboardPage({
                 Rank only · individual scores are not published
               </p>
 
-              <div className="overflow-x-auto border border-ink">
+              <div className="overflow-x-auto rounded-lg border border-line-soft">
                 <table className="w-full min-w-[720px] border-collapse bg-block-white text-left">
                   <caption className="sr-only">
                     Final standings for {event.title}
                   </caption>
                   <thead>
-                    <tr className="border-b border-ink">
+                    <tr className="border-b border-line-mid">
                       {["Rank", "Team", "Project", "Stack", "Links"].map((heading) => (
                         <th
                           key={heading}
                           scope="col"
-                          className="mono border-r border-ink px-4 py-3 text-eyebrow text-ink-muted last:border-r-0"
+                          className="mono px-4 py-3 text-eyebrow text-ink-muted"
                         >
                           {heading}
                         </th>
@@ -91,8 +91,8 @@ export default async function LeaderboardPage({
                   </thead>
                   <tbody>
                     {rows.map((row) => (
-                      <tr key={row.teamId} className="border-b border-ink last:border-b-0">
-                        <td className="border-r border-ink px-4 py-4 align-top">
+                      <tr key={row.teamId} className="border-b border-line-soft last:border-b-0">
+                        <td className="px-4 py-4 align-top">
                           <div className="flex items-center gap-3">
                             <span className="font-sans text-[22px] font-bold tabular-nums">
                               {String(row.rank).padStart(2, "0")}
@@ -102,18 +102,18 @@ export default async function LeaderboardPage({
                             ) : null}
                           </div>
                         </td>
-                        <td className="border-r border-ink px-4 py-4 align-top font-medium">
+                        <td className="px-4 py-4 align-top font-medium">
                           {row.teamName}
                         </td>
-                        <td className="border-r border-ink px-4 py-4 align-top">
+                        <td className="px-4 py-4 align-top">
                           {row.title}
                         </td>
-                        <td className="border-r border-ink px-4 py-4 align-top">
+                        <td className="px-4 py-4 align-top">
                           <ul className="flex flex-wrap gap-1.5">
                             {row.stack.map((tech) => (
                               <li
                                 key={tech}
-                                className="mono border border-ink px-1.5 py-0.5 text-eyebrow"
+                                className="mono rounded-sm border border-line-mid px-1.5 py-0.5 text-eyebrow"
                               >
                                 {tech}
                               </li>

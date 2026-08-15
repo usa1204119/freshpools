@@ -73,12 +73,23 @@ export async function requestOtpAction(
 
   try {
     const code = await issueOtp(email);
-    await sendOtpEmail(email, code, OTP_TTL_MINUTES);
+    const delivered = await sendOtpEmail(email, code, OTP_TTL_MINUTES);
 
-    // Without Resend configured the code cannot be delivered, so surface it in
-    // the server log rather than leaving a developer stuck at a dead end.
-    if (!process.env.RESEND_API_KEY) {
+    /**
+     * Development only. Needed because an unverified Resend domain delivers
+     * solely to the account owner's own address, so every other test account —
+     * including the e2e smoke test's — would otherwise be unreachable.
+     *
+     * Deliberately NOT gated on "email failed": a live one-time code in a
+     * production log is an impersonation vector for anyone with log access.
+     * A misconfigured production logs the failure instead, below.
+     */
+    if (process.env.NODE_ENV !== "production") {
       console.info(`[auth] OTP for ${email}: ${code}`);
+    } else if (!delivered) {
+      console.error(
+        `[auth] could not deliver a sign-in code to ${email} — check RESEND_API_KEY and that EMAIL_FROM uses a verified domain`,
+      );
     }
   } catch (error) {
     console.error("[auth] failed to issue OTP", error);

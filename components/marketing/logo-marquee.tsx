@@ -23,11 +23,13 @@ export function LogoMarquee({
   return (
     <section
       aria-label="Hiring partners"
-      className="border-y border-ink bg-paper py-10"
+      className="border-y border-line-soft bg-paper py-12"
     >
-      <Eyebrow className="mb-8 justify-center">{eyebrow}</Eyebrow>
+      <Eyebrow className="mb-9 justify-center">{eyebrow}</Eyebrow>
 
-      <div className="relative overflow-hidden" data-marquee>
+      {/* Fades at both edges instead of a hard cut — the row should read as
+          continuing past the viewport, not as a clipped list. */}
+      <div className="marquee-mask relative overflow-hidden" data-marquee>
         <ul className="marquee-track flex w-max items-center gap-16 pr-16">
           {track.map((name, index) => (
             <li
