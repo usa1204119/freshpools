@@ -1,0 +1,553 @@
+// FreshPools — data model
+// Money is stored in PAISE everywhere (Razorpay's unit) except CTC, which is
+// rupees per annum. Never mix the two.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ENUMS
+// ═══════════════════════════════════════════════════════════════════════════
+
+enum Role {
+  CANDIDATE
+  COMPANY
+  ADMIN
+}
+
+enum Tier {
+  A
+  B
+  C
+}
+
+enum Availability {
+  LOOKING
+  OPEN
+  PLACED
+}
+
+enum Mode {
+  ONLINE
+  OFFLINE
+}
+
+enum EventStatus {
+  DRAFT
+  ANNOUNCED
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  LIVE
+  JUDGING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  WAIVED
+  FAILED
+  REFUNDED
+}
+
+enum RefundStatus {
+  NOT_DUE
+  DUE
+  PROCESSED
+  FAILED
+}
+
+enum CollegeStatus {
+  PROSPECT
+  ACTIVE
+  PAST
+}
+
+enum RequirementStatus {
+  NEW
+  QUALIFYING
+  MATCHING
+  SHORTLIST_SENT
+  CLOSED
+  LOST
+}
+
+enum IntroStatus {
+  SENT
+  ACCEPTED
+  INTERVIEWING
+  OFFERED
+  JOINED
+  CLEARED
+  PAID
+  REJECTED
+  WITHDRAWN
+}
+
+enum FeeStatus {
+  NOT_DUE
+  DUE
+  INVOICED
+  PAID
+  WRITTEN_OFF
+}
+
+enum EnquiryType {
+  HACKATHON
+  WORKSHOP
+  BOTH
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AUTH — Auth.js v5 with the Prisma adapter
+// ═══════════════════════════════════════════════════════════════════════════
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  role          Role      @default(CANDIDATE)
+  name          String
+  phone         String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  candidate Candidate?
+  company   Company?
+
+  @@index([role])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Email OTP codes. `token` stores a SHA-256 hash — never the raw code.
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+  attempts   Int      @default(0)
+
+  @@id([identifier, token])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PEOPLE & ORGS
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Candidate {
+  id           String       @id @default(cuid())
+  userId       String       @unique
+  college      String
+  gradYear     Int
+  skills       String[]     @default([])
+  github       String
+  linkedin     String?
+  resumeUrl    String?
+  videoUrl     String?
+  tier         Tier?
+  availability Availability @default(LOOKING)
+  /// Internal only. Never serialised to a company-facing response.
+  adminNote    String?
+  /// Set by an admin after scoring; gates visibility in the talent pool.
+  inTalentPool Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  registrations Registration[]
+  ledTeams      Team[]         @relation("TeamLeader")
+  teamMembers   TeamMember[]
+  scores        Score[]
+  intros        Intro[]
+  shortlisted   ShortlistItem[]
+  introRequests IntroRequest[]
+
+  @@index([tier, availability])
+  @@index([inTalentPool])
+}
+
+model Company {
+  id              String   @id @default(cuid())
+  userId          String?  @unique
+  name            String
+  website         String?
+  contactPerson   String
+  contactEmail    String?
+  contactPhone    String?
+  agreementSigned Boolean  @default(false)
+  /// Shown in the landing-page marquee only when true and the name is real.
+  isHiringPartner Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user             User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  requirements     Requirement[]
+  sponsoredEvents  Event[]        @relation("EventSponsor")
+  shortlist        ShortlistItem[]
+  introRequests    IntroRequest[]
+
+  @@index([isHiringPartner])
+}
+
+model College {
+  id          String        @id @default(cuid())
+  name        String
+  city        String
+  tpoName     String?
+  tpoContact  String?
+  tpoEmail    String?
+  status      CollegeStatus @default(PROSPECT)
+  /// Rupees. Null when the college only hosts sponsor-funded hackathons.
+  workshopFee Int?
+  studentCount Int?
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  events    Event[]
+  enquiries CollegeEnquiry[]
+
+  @@index([status])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Event {
+  id               String      @id @default(cuid())
+  slug             String      @unique
+  title            String
+  tagline          String?
+  problemStatement String      @db.Text
+  sponsorId        String?
+  collegeId        String?
+  mode             Mode        @default(ONLINE)
+  venue            String?
+  city             String?
+  startAt          DateTime
+  endAt            DateTime
+  deadline         DateTime
+  status           EventStatus @default(DRAFT)
+  prizePool        Int?        // paise
+  maxTeamSize      Int         @default(4)
+  minTeamSize      Int         @default(2)
+  tracks           String[]    @default([])
+  rules            String[]    @default([])
+  coverBlock       String      @default("blue") // blue | coral | yellow | white
+
+  // ── Registration fee config ──────────────────────────────────────────
+  registrationFee Int     @default(20000) // paise → ₹200
+  depositAmount   Int     @default(10000) // refundable part → ₹100
+  /// When true entry is free, the yellow banner renders, and registrations
+  /// are created with paymentStatus = WAIVED.
+  isSponsoredFree Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sponsor       Company?       @relation("EventSponsor", fields: [sponsorId], references: [id], onDelete: SetNull)
+  college       College?       @relation(fields: [collegeId], references: [id], onDelete: SetNull)
+  registrations Registration[]
+  teams         Team[]
+  prizes        Prize[]
+
+  @@index([status, startAt])
+  @@index([slug])
+}
+
+model Prize {
+  id      String @id @default(cuid())
+  eventId String
+  rank    String // "1st", "2nd", "Best UI"
+  amount  Int?   // paise
+  perk    String?
+  sortOrder Int  @default(0)
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model Registration {
+  id          String  @id @default(cuid())
+  eventId     String
+  candidateId String
+  teamId      String?
+  checkedIn   Boolean @default(false)
+  checkedInAt DateTime?
+
+  // Captured at registration time
+  tshirtSize String?
+  phone      String?
+
+  // ── Payment ──────────────────────────────────────────────────────────
+  paymentStatus     PaymentStatus @default(PENDING)
+  razorpayOrderId   String?       @unique
+  razorpayPaymentId String?
+  amountPaid        Int           @default(0) // paise
+  paidAt            DateTime?
+
+  // ── Refund (deposit back after verified check-in) ─────────────────────
+  refundStatus RefundStatus @default(NOT_DUE)
+  refundId     String?
+  refundAmount Int?
+  refundedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  team      Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@unique([eventId, candidateId])
+  @@index([eventId, paymentStatus])
+  @@index([razorpayOrderId])
+}
+
+model Team {
+  id       String @id @default(cuid())
+  eventId  String
+  name     String
+  joinCode String @unique
+  leaderId String
+
+  createdAt DateTime @default(now())
+
+  event         Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  leader        Candidate      @relation("TeamLeader", fields: [leaderId], references: [id], onDelete: Cascade)
+  members       TeamMember[]
+  registrations Registration[]
+  submission    Submission?
+
+  @@unique([eventId, name])
+  @@index([joinCode])
+}
+
+model TeamMember {
+  teamId      String
+  candidateId String
+  joinedAt    DateTime @default(now())
+
+  team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@id([teamId, candidateId])
+}
+
+model Submission {
+  id          String  @id @default(cuid())
+  teamId      String  @unique
+  title       String
+  description String  @db.Text
+  repoUrl     String
+  videoUrl    String
+  stack       String[] @default([])
+  /// Per-member breakdown of who built what — read during the viva.
+  contributions String @db.Text
+  submittedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  team   Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  scores Score[]
+}
+
+/// NON-NEGOTIABLE #3: scoring is per candidate, never per team.
+model Score {
+  id           String @id @default(cuid())
+  submissionId String
+  candidateId  String
+
+  demo Int // /30
+  code Int // /25
+  fit  Int // /25
+  viva Int // /20
+
+  notes String? @db.Text
+  rank  Int?
+
+  scoredById String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  candidate  Candidate  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, candidateId])
+  @@index([candidateId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DEMAND SIDE
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Requirement {
+  id        String            @id @default(cuid())
+  companyId String
+  role      String
+  stack     String[]          @default([])
+  openings  Int               @default(1)
+  ctcMin    Int // rupees per annum
+  ctcMax    Int
+  location  String
+  isRemote  Boolean           @default(false)
+  urgency   String            @default("1_MONTH") // IMMEDIATE | 1_MONTH | 3_MONTHS
+  status    RequirementStatus @default(NEW)
+  /// "Would you sponsor an event on this problem?" — yes | maybe | no
+  sponsorInterest String?
+  notes     String?           @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  intros        Intro[]
+  introRequests IntroRequest[]
+
+  @@index([status])
+  @@index([companyId])
+}
+
+model ShortlistItem {
+  id          String   @id @default(cuid())
+  companyId   String
+  candidateId String
+  note        String?
+  createdAt   DateTime @default(now())
+
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, candidateId])
+}
+
+/// A company asking to be put in touch with a candidate.
+///
+/// This exists so NON-NEGOTIABLE #1 holds: a company can express interest, but
+/// it cannot create an Intro. An admin reviews the request, asks the candidate,
+/// and only then does an Intro row appear.
+model IntroRequest {
+  id            String   @id @default(cuid())
+  companyId     String
+  candidateId   String
+  requirementId String?
+  message       String?
+  status        String   @default("PENDING") // PENDING | APPROVED | DECLINED
+  handledAt     DateTime?
+  createdAt     DateTime @default(now())
+
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  candidate   Candidate    @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  requirement Requirement? @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([companyId])
+}
+
+/// REVENUE LEDGER — the most important table in the system.
+/// NON-NEGOTIABLE #4: every introduction is logged, for dispute proof.
+model Intro {
+  id            String      @id @default(cuid())
+  requirementId String
+  candidateId   String
+  status        IntroStatus @default(SENT)
+
+  sentAt   DateTime  @default(now())
+  joinedAt DateTime?
+  /// joinedAt + 90 days. The fee becomes collectable on this date.
+  clearsAt DateTime?
+
+  offerCtc  Int? // rupees per annum
+  feeAmount Int? // rupees
+  feeStatus FeeStatus @default(NOT_DUE)
+
+  notes     String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  candidate   Candidate   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  events      IntroEvent[]
+
+  @@unique([requirementId, candidateId])
+  @@index([status])
+  @@index([clearsAt])
+}
+
+/// Append-only audit trail for each intro. Never updated, never deleted.
+model IntroEvent {
+  id        String      @id @default(cuid())
+  introId   String
+  from      IntroStatus?
+  to        IntroStatus
+  actorId   String?
+  note      String?
+  createdAt DateTime    @default(now())
+
+  intro Intro @relation(fields: [introId], references: [id], onDelete: Cascade)
+
+  @@index([introId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INBOUND LEADS
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Raw submissions from /for-colleges. Promoted to a College by an admin.
+model CollegeEnquiry {
+  id           String      @id @default(cuid())
+  collegeId    String?
+  collegeName  String
+  city         String
+  contactName  String
+  contactRole  String
+  email        String
+  phone        String?
+  studentCount Int?
+  department   String?
+  preferredMonth String?
+  interestedIn EnquiryType @default(BOTH)
+  message      String?     @db.Text
+  handled      Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+
+  college College? @relation(fields: [collegeId], references: [id], onDelete: SetNull)
+
+  @@index([handled])
+}
