@@ -15,3 +15,6 @@ tsconfig.tsbuildinfo
 
 # Playwright screenshots from scripts/shoot.mjs
 shots
+
+.vercel
+.env*

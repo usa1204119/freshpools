@@ -19,7 +19,8 @@
     "smoke": "node scripts/e2e-smoke.mjs",
     "smoke:clean": "tsx scripts/clean-smoke.ts",
     "shoot": "node scripts/shoot.mjs",
-    "check:razorpay": "tsx --conditions=react-server scripts/check-razorpay.ts"
+    "check:razorpay": "tsx --conditions=react-server scripts/check-razorpay.ts",
+    "otp": "node scripts/otp.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

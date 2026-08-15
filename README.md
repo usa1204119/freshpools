@@ -174,6 +174,27 @@ subscribe to `payment.captured`, `payment.failed`, `refund.processed` and
 successful payment stays `PENDING`, which is correct: the webhook is the only
 source of truth.
 
+`node scripts/check-webhook.mjs [baseUrl]` confirms the deployed endpoint and
+your local secret agree — it posts one correctly signed payload (expects 200)
+and one forgery (expects 400), referencing an order id that matches nothing, so
+no data is touched.
+
+### Test payment methods
+
+**Netbanking is the most reliable in test mode** — pick any bank and Razorpay
+shows a Success/Failure simulator, with no card validation in the way.
+
+For cards, use a **domestic** number. The commonly quoted `4111 1111 1111 1111`
+is treated as international and is rejected outright on Indian test accounts
+with "International cards are not supported":
+
+| Card | Number |
+|---|---|
+| Mastercard (domestic) | `5267 3181 8797 5449` |
+| Visa (domestic) | `4718 6091 0820 4366` |
+
+Expiry `12/30`, CVV `123`, test OTP `1111`.
+
 ---
 
 ## NON-NEGOTIABLES
