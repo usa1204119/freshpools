@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Hero } from "@/components/marketing/hero";
 import { DashboardMockup } from "@/components/marketing/dashboard-mockup";
 import { LogoMarquee } from "@/components/marketing/logo-marquee";
+import { RoleDoors } from "@/components/marketing/role-doors";
 import { Faq } from "@/components/marketing/faq";
 import { Reveal } from "@/components/marketing/reveal";
 import { Eyebrow, MixedHeadline, SectionHeader } from "@/components/marketing/mixed-headline";
@@ -29,6 +30,8 @@ export default async function LandingPage() {
   return (
     <>
       <Hero verifiedCount={verifiedCount} verifiedNames={verifiedNames} />
+
+      <RoleDoors />
 
       {/* ── Dashboard mockup: half-cropped, overlapping the section boundary ── */}
       <section aria-hidden="false" className="relative bg-paper">
@@ -183,34 +186,6 @@ export default async function LandingPage() {
           </div>
         </section>
       ) : null}
-
-      {/* ── For colleges strip ─────────────────────────────────────────────── */}
-      <section className="bg-paper pb-16 lg:pb-24">
-        <div className="container-x">
-          <Reveal>
-            <Block
-              color="coral"
-              className="flex flex-col items-start justify-between gap-6 p-8 lg:flex-row lg:items-center lg:p-12"
-            >
-              <div>
-                <Eyebrow className="mb-3">For colleges</Eyebrow>
-                <p className="max-w-2xl text-[22px] leading-snug lg:text-[26px]">
-                  <span className="hl-serif">
-                    Run a hackathon on your campus at
-                  </span>{" "}
-                  <span className="hl-sans">zero cost</span>{" "}
-                  <span className="hl-serif">
-                    — sponsor-funded, with a two-day bootcamp available before it.
-                  </span>
-                </p>
-              </div>
-              <ButtonLink href="/for-colleges" variant="secondary" className="shrink-0">
-                See both offerings
-              </ButtonLink>
-            </Block>
-          </Reveal>
-        </div>
-      </section>
 
       <Faq items={LANDING_FAQ} />
 

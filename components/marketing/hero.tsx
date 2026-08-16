@@ -26,8 +26,11 @@ export function Hero({
     <section className="wash-hero relative isolate overflow-hidden">
       <BackgroundArt />
 
-      <div className="container-x relative flex min-h-[calc(100svh-10rem)] flex-col items-center justify-center py-20 text-center lg:py-24">
-        <div data-rise="" className="rise mb-8">
+      {/* Deliberately short of a full viewport: the role doors directly below
+          must peek above the fold, or a student still lands on a company pitch
+          and has to guess that scrolling helps. */}
+      <div className="container-x relative flex min-h-[calc(74svh-5rem)] flex-col items-center justify-center py-10 text-center lg:py-12">
+        <div data-rise="" className="rise mb-6">
           <Eyebrow>Verified fresher talent</Eyebrow>
         </div>
 
@@ -41,7 +44,7 @@ export function Hero({
 
         <p
           data-rise=""
-          className="rise mt-8 max-w-2xl text-body-lg text-ink-muted"
+          className="rise mt-6 max-w-2xl text-body-lg text-ink-muted"
           style={{ animationDelay: "180ms" }}
         >
           {HERO.sub}
@@ -49,7 +52,7 @@ export function Hero({
 
         <div
           data-rise=""
-          className="rise mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
+          className="rise mt-8 flex flex-col gap-4 sm:flex-row sm:items-center"
           style={{ animationDelay: "240ms" }}
         >
           <ButtonLink href="/for-companies" size="lg">
@@ -61,7 +64,7 @@ export function Hero({
         </div>
 
         {verifiedCount > 0 ? (
-          <div data-rise="" className="rise mt-12" style={{ animationDelay: "300ms" }}>
+          <div data-rise="" className="rise mt-8" style={{ animationDelay: "300ms" }}>
             <SocialProof
               names={verifiedNames}
               total={verifiedCount}
